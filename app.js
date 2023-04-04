@@ -1,50 +1,42 @@
+require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routers/user');
+const sauceRoutes = require('./routers/sauce');
+const path = require("path");
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://muumz:1MaisonMaudite@piiquante.7g83roz.mongodb.net/?retryWrites=true&w=majority',
+/**
+ * Connect to online database
+ */
+mongoose.connect(process.env.DB_PATH,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+  .then(() => console.log('Connexion to MongoDB succeed !'))
+  .catch(() => console.log('Connexion to MongoDB failed !'));
 
 
-app.use((req, res, next) => {
-res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-);
-res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-);
-next();
+const corsOptions = {
+  origin: [process.env.DOMAIN],
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions));
+
+const limiter = rateLimit({
+  windowMs: process.env.TIME_LIMIT, // limite à 15 minutes
+  max: process.env.REQUESTS_LIMIT // limite à 100 requêtes par IP
 });
+
+app.use(limiter);
 
 app.use(express.json());
 
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use('/api/auth', userRoutes);
+app.use("/api/sauces", sauceRoutes);
 
-app.use((req, res, next) => {
-  console.log('Requête reçue !');
-  next();
-});
-
-app.use((req, res, next) => {
-  res.status(201);
-  next();
-});
-
-app.use((req, res, next) => {
-  res.json({ message: 'Votre requête a bien été reçue !' });
-  next();
-});
-
-app.use((req, res, next) => {
-  console.log('Réponse envoyée avec succès !');
-});
 
 module.exports = app;

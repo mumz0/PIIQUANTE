@@ -1,6 +1,11 @@
 const http = require('http');
 const app = require('./app');
 
+/**
+ * 
+ * @param {} val 
+ * @returns Valid port
+ */
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
