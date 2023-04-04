@@ -6,6 +6,9 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
+/**
+ * Localisation storage of images imported
+ */
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');
