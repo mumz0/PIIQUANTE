@@ -2,6 +2,7 @@ const Sauce = require('../models/Sauce');
 const fs = require('fs'); 
 
 
+
 /**
  * @param req {express.Request}
  * @param res {express.Response}
@@ -73,6 +74,7 @@ exports.getAllSauces = (req, res, next) => {
     .catch( error => res.status(400).json({ error }))
 };
 
+
 /**
  * @param req {express.Request}
  * @param res {express.Response}
@@ -83,6 +85,7 @@ exports.getOneSauce = (req, res, next) => {
     .then( sauce => res.status(200).json(sauce))
     .catch( error => res.status(404).json({ error }))
 };
+
 
 /**
  * @param req {express.Request}
@@ -105,6 +108,7 @@ exports.rateSauces = (req, res, next) => {
         .then( sauce => {
             if( sauce.usersLiked.indexOf(req.body.userId)!== -1){
                  Sauce.updateOne({_id: req.params.id}, { $inc: { likes: -1},$pull: { usersLiked: req.body.userId}, _id: req.params.id })
+
                 .then( () => res.status(200).json({ message: 'Like removed' }))
                 .catch( error => res.status(400).json({ error}))
                 }

@@ -12,6 +12,7 @@ const app = express();
 /**
  * Connect to online database
  */
+
 mongoose.connect(process.env.DB_PATH,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -24,6 +25,7 @@ const corsOptions = {
   optionsSuccessStatus: 200
 }
 app.use(cors(corsOptions));
+
 
 const limiter = rateLimit({
   windowMs: process.env.TIME_LIMIT, // limite à 15 minutes
